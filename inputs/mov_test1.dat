@@ -1,0 +1,8 @@
+mov 3 r1
+mov 4 r2
+mov 5 r3
+mov 3 r4
+mov r1 r2
+mov r4 r1
+mov r2 r3
+mov r3 r1
