@@ -71,7 +71,6 @@ def search_col(op, opd1, opd2):
                 col["opd1"] == opd2 and \
                 col["opd2"] == opd1:
             return col
-    
     return None
 
 def do_mov(args):
@@ -128,7 +127,6 @@ def do_arithmetic(args, op):
                 return
     print(op, args[0], args[1], args[2])
 
-
 def print_tables():
     print("=" * 26 + " tables " + "=" * 26)
     for col in tables:
@@ -154,7 +152,6 @@ def main(args):
         elif line.startswith("mul"):
             do_arithmetic(line.rstrip("\n").split(" ")[1:], "mul")
         print_tables()
-        
 
 if __name__ == "__main__":
     main(sys.argv[1:])
