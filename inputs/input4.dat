@@ -1,0 +1,6 @@
+mov 3 r9
+add i0 r9 i1
+mov i0 i2
+mov r9 r11
+mov i1 i3
+return i3

@@ -1,0 +1,7 @@
+add i0 i1 i2
+sub i3 i7 i5
+add i0 i1 i6
+sub i3 i7 i0
+add i2 i5 i3
+add i6 i0 i7
+add i3 i7 i8

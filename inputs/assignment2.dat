@@ -1,0 +1,8 @@
+add i0 i1 r2
+mov 3 r3
+add r2 r3 r4
+mov 3 r5
+add i1 i0 r6
+add r5 r6 r7
+mul r4 r7 r8
+return r8
