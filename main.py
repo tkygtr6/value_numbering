@@ -26,12 +26,12 @@ def search_var(var):
             return col
 
     max_qty += 1
-    var_dict = {}
-    var_dict["Qty"] = max_qty
-    var_dict["op"] = var
-    tables.append(var_dict)
+    new_col = {}
+    new_col["Qty"] = max_qty
+    new_col["op"] = var
+    tables.append(new_col)
 
-    return var_dict;
+    return new_col;
 
 def search_num(num):
     global tables
@@ -42,13 +42,13 @@ def search_num(num):
             return col
 
     max_qty += 1
-    var_dict = {}
-    var_dict["Qty"] = max_qty
-    var_dict["op"] = "lit"
-    var_dict["opd1"] = num
-    tables.append(var_dict)
+    new_col = {}
+    new_col["Qty"] = max_qty
+    new_col["op"] = "lit"
+    new_col["opd1"] = num
+    tables.append(new_col)
 
-    return var_dict;
+    return new_col;
 
 def search_col(some_str):
     if some_str.isdecimal():
@@ -66,11 +66,11 @@ def do_mov(args):
 
     col1 = search_col(args[0])
 
-    var_dict = {}
-    var_dict["Qty"] = col1["Qty"]
-    var_dict["op"] = args[1]
-    var_dict["opd1"] = col1["Qty"]
-    tables.append(var_dict)
+    new_col = {}
+    new_col["Qty"] = col1["Qty"]
+    new_col["op"] = args[1]
+    new_col["opd1"] = col1["Qty"]
+    tables.append(new_col)
 
 def print_tables():
     print("=" * 26 + " tables " + "=" * 26)
