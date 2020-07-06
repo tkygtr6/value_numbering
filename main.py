@@ -79,9 +79,9 @@ def do_mov(args):
 
     col1 = search_or_newly_create_col(args[0])
 
-    col2 = search_col_for_target_var(args[0])
+    col2 = search_col_for_target_var(args[1])
     if col2 and col1["Qty"] == col2["Qty"]:
-        print("Redundatn assignment elimination")
+        print("Redundant assignment elimination")
     else:
         new_col = {}
         new_col["Qty"] = col1["Qty"]
