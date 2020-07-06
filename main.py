@@ -82,17 +82,17 @@ def do_mov(args):
     new_col["opd1"] = col1["Qty"]
     tables.append(new_col)
 
-def do_add(args):
+def do_arithmetic(args, op):
     global tables
     global max_qty
 
-    print("add", args[0], args[1], args[2])
+    print(op, args[0], args[1], args[2])
 
     col1 = search_str(args[0])
     col2 = search_str(args[1])
 
     col_for_calc = {}
-    col_for_calc["op"] = "Add"
+    col_for_calc["op"] = op
     col_for_calc["opd1"] = col1["Qty"]
     col_for_calc["opd2"] = col2["Qty"]
 
@@ -101,7 +101,7 @@ def do_add(args):
         max_qty += 1
         col_for_calc = {}
         col_for_calc["Qty"] = max_qty
-        col_for_calc["op"] = "Add"
+        col_for_calc["op"] = op
         col_for_calc["opd1"] = col1["Qty"]
         col_for_calc["opd2"] = col2["Qty"]
         tables.append(col_for_calc)
@@ -139,7 +139,9 @@ def main(args):
         if line.startswith("mov"):
             do_mov(line.rstrip("\n").split(" ")[1:])
         if line.startswith("add"):
-            do_add(line.rstrip("\n").split(" ")[1:])
+            do_arithmetic(line.rstrip("\n").split(" ")[1:], "add")
+        if line.startswith("sub"):
+            do_arithmetic(line.rstrip("\n").split(" ")[1:], "sub")
         print_tables()
         
 
