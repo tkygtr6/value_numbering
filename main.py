@@ -57,7 +57,7 @@ def search_str(some_str):
         col = search_var(some_str)
     return col
 
-def search_col(target_col):
+def search_col(target_col, op):
     global tables
     global max_qty
 
@@ -66,7 +66,12 @@ def search_col(target_col):
                 col["opd1"] == target_col["opd1"] and \
                 col["opd2"] == target_col["opd2"]:
             return col
-
+        # For commutativity
+        if op in ["add", "mul"] and \
+                col["op"] == target_col["op"] and \
+                col["opd1"] == target_col["opd2"] and \
+                col["opd2"] == target_col["opd1"]:
+            return col
 
 def do_mov(args):
     global tables
@@ -96,7 +101,7 @@ def do_arithmetic(args, op):
     col_for_calc["opd1"] = col1["Qty"]
     col_for_calc["opd2"] = col2["Qty"]
 
-    col_for_calc = search_col(col_for_calc)
+    col_for_calc = search_col(col_for_calc, op)
     if not col_for_calc:
         max_qty += 1
         col_for_calc = {}
