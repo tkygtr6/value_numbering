@@ -4,12 +4,23 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
 
+OPS = ["mov", "add", "sub", "mul"]
+
+Qty_dict = {}
 tables = []
 max_qty = 0
 
 def init():
     tables = []
     max_qty = 0
+
+def append_tables(col):
+    tables.append(col)
+    if not col["Qty"] in Qty_dict.keys():
+        if col["op"] == "lit":
+            Qty_dict[col["Qty"]] = col["opd1"]
+        elif col["op"] not in OPS:
+            Qty_dict[col["Qty"]] = col["op"]
 
 def search_col_for_target_var(var):
     for col in reversed(tables):
@@ -34,7 +45,7 @@ def search_or_newly_create_col(some_str):
             new_col["Qty"] = max_qty
             new_col["op"] = "lit"
             new_col["opd1"] = some_str
-            tables.append(new_col)
+            append_tables(new_col)
             col = new_col
     else:
         col = search_col_for_target_var(some_str)
@@ -43,7 +54,7 @@ def search_or_newly_create_col(some_str):
             new_col = {}
             new_col["Qty"] = max_qty
             new_col["op"] = some_str
-            tables.append(new_col)
+            append_tables(new_col)
             col = new_col
 
     return col
@@ -75,13 +86,13 @@ def do_mov(args):
     new_col["Qty"] = col1["Qty"]
     new_col["op"] = args[1]
     new_col["opd1"] = col1["Qty"]
-    tables.append(new_col)
+    append_tables(new_col)
 
 def do_arithmetic(args, op):
     global tables
     global max_qty
 
-    print(op, args[0], args[1], args[2])
+    is_CSE = False
 
     col1 = search_or_newly_create_col(args[0])
     col2 = search_or_newly_create_col(args[1])
@@ -89,7 +100,8 @@ def do_arithmetic(args, op):
     col_for_calc_result = search_col(op, col1["Qty"], col2["Qty"])
     if col_for_calc_result:
         print("Common subexpression elimination")
-        tables.append(col_for_calc_result)
+        is_CSE = True
+        append_tables(col_for_calc_result)
     else:
         max_qty += 1
         col_for_calc_result = {}
@@ -97,13 +109,22 @@ def do_arithmetic(args, op):
         col_for_calc_result["op"] = op
         col_for_calc_result["opd1"] = col1["Qty"]
         col_for_calc_result["opd2"] = col2["Qty"]
-        tables.append(col_for_calc_result)
+        append_tables(col_for_calc_result)
 
     col_for_opd3 = {}
     col_for_opd3["Qty"] = col_for_calc_result["Qty"]
     col_for_opd3["op"] = args[2]
     col_for_opd3["opd1"] = col_for_calc_result["Qty"]
-    tables.append(col_for_opd3)
+    append_tables(col_for_opd3)
+
+    if is_CSE:
+        for col in reversed(tables):
+            if col["Qty"] == col_for_opd3["opd1"] and \
+                    col["op"] not in OPS:
+                print("mov", Qty_dict[col["opd1"]], args[2])
+                return
+    print(op, args[0], args[1], args[2])
+
 
 def print_tables():
     print("=" * 26 + " tables " + "=" * 26)
