@@ -142,6 +142,8 @@ def main(args):
             do_arithmetic(line.rstrip("\n").split(" ")[1:], "add")
         if line.startswith("sub"):
             do_arithmetic(line.rstrip("\n").split(" ")[1:], "sub")
+        if line.startswith("mul"):
+            do_arithmetic(line.rstrip("\n").split(" ")[1:], "mul")
         print_tables()
         
 
