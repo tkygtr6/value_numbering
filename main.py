@@ -4,8 +4,6 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
 
-# def search_tables(s):
-
 tables = []
 max_qty = 0
 
@@ -17,14 +15,12 @@ def search_col_for_target_var(var):
     for col in reversed(tables):
         if col["op"] == var:
             return col
-
     return None;
 
 def search_col_for_target_num(num):
     for col in reversed(tables):
         if col["op"] == "lit" and col["opd1"] == num:
             return col
-
     return None;
 
 def search_or_newly_create_col(some_str):
@@ -52,17 +48,17 @@ def search_or_newly_create_col(some_str):
 
     return col
 
-def search_col(target_col, op):
+def search_col(op, opd1, opd2):
     for col in reversed(tables):
-        if col["op"] == target_col["op"] and \
-                col["opd1"] == target_col["opd1"] and \
-                col["opd2"] == target_col["opd2"]:
+        if col["op"] == op and \
+                col["opd1"] == opd1 and \
+                col["opd2"] == opd2:
             return col
         # For commutativity
         if op in ["add", "mul"] and \
-                col["op"] == target_col["op"] and \
-                col["opd1"] == target_col["opd2"] and \
-                col["opd2"] == target_col["opd1"]:
+                col["op"] == op and \
+                col["opd1"] == opd2 and \
+                col["opd2"] == opd1:
             return col
     
     return None
@@ -90,30 +86,23 @@ def do_arithmetic(args, op):
     col1 = search_or_newly_create_col(args[0])
     col2 = search_or_newly_create_col(args[1])
 
-    col_for_calc = {}
-    col_for_calc["op"] = op
-    col_for_calc["opd1"] = col1["Qty"]
-    col_for_calc["opd2"] = col2["Qty"]
-
-    col_for_calc = search_col(col_for_calc, op)
-    if not col_for_calc:
-        max_qty += 1
-        col_for_calc = {}
-        col_for_calc["Qty"] = max_qty
-        col_for_calc["op"] = op
-        col_for_calc["opd1"] = col1["Qty"]
-        col_for_calc["opd2"] = col2["Qty"]
-        tables.append(col_for_calc)
-    else:
+    col_for_calc_result = search_col(op, col1["Qty"], col2["Qty"])
+    if col_for_calc_result:
         print("Common subexpression elimination")
-        tables.append(col_for_calc)
-        pass
+        tables.append(col_for_calc_result)
+    else:
+        max_qty += 1
+        col_for_calc_result = {}
+        col_for_calc_result["Qty"] = max_qty
+        col_for_calc_result["op"] = op
+        col_for_calc_result["opd1"] = col1["Qty"]
+        col_for_calc_result["opd2"] = col2["Qty"]
+        tables.append(col_for_calc_result)
 
     col_for_opd3 = {}
-    col_for_opd3["Qty"] = col_for_calc["Qty"]
+    col_for_opd3["Qty"] = col_for_calc_result["Qty"]
     col_for_opd3["op"] = args[2]
-    col_for_opd3["opd1"] = col_for_calc["Qty"]
-
+    col_for_opd3["opd1"] = col_for_calc_result["Qty"]
     tables.append(col_for_opd3)
 
 def print_tables():
@@ -123,9 +112,6 @@ def print_tables():
     print("=" * 60)
 
 def main(args):
-    global tables
-    global max_qty
-
     init()
 
     filename = args[0]
