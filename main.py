@@ -25,7 +25,7 @@ def append_tables(col):
             Qty_dict[col["Qty"]] = col["op"]
 
 def append_out_RTL(string):
-    print(string)
+    # print(string)
     out_RTL.append(string)
 
 def optimize_with_DCE(last_var):
@@ -149,8 +149,9 @@ def do_arithmetic(args, op):
     append_tables(col_for_opd3)
 
     if is_CSE:
-        print(col_for_opd3["opd1"])
-        append_out_RTL("mov {} {}".format(Qty_dict[col_for_opd3["opd1"]], args[2]))
+        string = "mov {} {}".format(Qty_dict[col_for_opd3["opd1"]], args[2])
+        print("MODIFIED: ", string)
+        append_out_RTL(string)
         return
     append_out_RTL("{} {} {} {}".format(op, args[0], args[1], args[2]))
 
@@ -159,20 +160,24 @@ def print_tables():
     for col in tables:
         print(col)
     print("=" * 60)
+    print("")
 
 def main(args):
     init()
 
     filename = args[0]
+    print("=" * 20 + " original instructions" + "=" * 20)
     with open(filename) as f:
         lines = f.readlines()
 
     for line in lines:
         print(line.strip("\n"))
+    print("=" * 60)
     print("")
 
     for line in lines:
         line = line.strip("\n")
+        print("INPUT:", line)
         if line.startswith("mov"):
             do_mov(line.split(" ")[1:])
         elif line.startswith("add"):
