@@ -78,15 +78,18 @@ def do_mov(args):
     global tables
     global max_qty
 
-    print("mov", args[0], args[1])
-
     col1 = search_or_newly_create_col(args[0])
 
-    new_col = {}
-    new_col["Qty"] = col1["Qty"]
-    new_col["op"] = args[1]
-    new_col["opd1"] = col1["Qty"]
-    append_tables(new_col)
+    col2 = search_col_for_target_var(args[0])
+    if col2 and col1["Qty"] == col2["Qty"]:
+        print("Redundatn assignment elimination")
+    else:
+        new_col = {}
+        new_col["Qty"] = col1["Qty"]
+        new_col["op"] = args[1]
+        new_col["opd1"] = col1["Qty"]
+        append_tables(new_col)
+        print("mov", args[0], args[1])
 
 def do_arithmetic(args, op):
     global tables
