@@ -149,11 +149,9 @@ def do_arithmetic(args, op):
     append_tables(col_for_opd3)
 
     if is_CSE:
-        for col in reversed(tables):
-            if col["Qty"] == col_for_opd3["opd1"] and \
-                    col["op"] not in OPS:
-                append_out_RTL("mov {} {}".format(Qty_dict[col["opd1"]], args[2]))
-                return
+        print(col_for_opd3["opd1"])
+        append_out_RTL("mov {} {}".format(Qty_dict[col_for_opd3["opd1"]], args[2]))
+        return
     append_out_RTL("{} {} {} {}".format(op, args[0], args[1], args[2]))
 
 def print_tables():
