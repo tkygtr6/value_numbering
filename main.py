@@ -28,6 +28,25 @@ def append_out_RTL(string):
     print(string)
     out_RTL.append(string)
 
+def optimize_with_DCE(last_var):
+    print("Before Dead Code Elimination")
+    for line in out_RTL:
+        print(line)
+    print("return {}".format(last_var))
+    print("")
+
+    print("After Dead Code Elimination")
+    optimized_RTL_reversed = []
+    useful_variable_list = []
+    useful_variable_list.append(last_var)
+    for line in reversed(out_RTL):
+        if line.split(" ")[-1] in useful_variable_list:
+            useful_variable_list.extend(line.split(" ")[1:-1])
+            optimized_RTL_reversed.append(line)
+    for line in reversed(optimized_RTL_reversed):
+        print(line)
+    print("return {}".format(last_var))
+
 def search_col_for_target_var(var):
     for col in reversed(tables):
         if col["op"] == var:
@@ -160,6 +179,9 @@ def main(args):
             do_arithmetic(line.split(" ")[1:], "sub")
         elif line.startswith("mul"):
             do_arithmetic(line.split(" ")[1:], "mul")
+        elif line.startswith("return"):
+            optimize_with_DCE(line.split(" ")[1])
+            return
         print_tables()
 
 if __name__ == "__main__":
