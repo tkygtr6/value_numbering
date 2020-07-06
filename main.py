@@ -104,7 +104,11 @@ def do_mov(args):
 
     col1 = search_or_newly_create_col(args[0])
 
-    col2 = search_col_for_target_var(args[1])
+    if args[1].isdecimal():
+        col2 = search_col_for_target_num(args[1])
+    else:
+        col2 = search_col_for_target_var(args[1])
+
     if col2 and col1["Qty"] == col2["Qty"]:
         print("Redundant assignment elimination")
     else:
