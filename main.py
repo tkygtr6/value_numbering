@@ -10,6 +10,8 @@ Qty_dict = {}
 tables = []
 max_qty = 0
 
+out_RTL = []
+
 def init():
     tables = []
     max_qty = 0
@@ -21,6 +23,10 @@ def append_tables(col):
             Qty_dict[col["Qty"]] = col["opd1"]
         elif col["op"] not in OPS:
             Qty_dict[col["Qty"]] = col["op"]
+
+def append_out_RTL(string):
+    print(string)
+    out_RTL.append(string)
 
 def search_col_for_target_var(var):
     for col in reversed(tables):
@@ -88,7 +94,7 @@ def do_mov(args):
         new_col["op"] = args[1]
         new_col["opd1"] = col1["Qty"]
         append_tables(new_col)
-        print("mov", args[0], args[1])
+        append_out_RTL("mov {} {}".format(args[0], args[1]))
 
 def do_arithmetic(args, op):
     global tables
@@ -123,9 +129,9 @@ def do_arithmetic(args, op):
         for col in reversed(tables):
             if col["Qty"] == col_for_opd3["opd1"] and \
                     col["op"] not in OPS:
-                print("mov", Qty_dict[col["opd1"]], args[2])
+                append_out_RTL("mov {} {}".format(Qty_dict[col["opd1"]], args[2]))
                 return
-    print(op, args[0], args[1], args[2])
+    append_out_RTL("{} {} {} {}".format(op, args[0], args[1], args[2]))
 
 def print_tables():
     print("=" * 26 + " tables " + "=" * 26)
@@ -140,17 +146,20 @@ def main(args):
     with open(filename) as f:
         lines = f.readlines()
 
-    print(lines)
+    for line in lines:
+        print(line.strip("\n"))
+    print("")
 
     for line in lines:
+        line = line.strip("\n")
         if line.startswith("mov"):
-            do_mov(line.rstrip("\n").split(" ")[1:])
+            do_mov(line.split(" ")[1:])
         elif line.startswith("add"):
-            do_arithmetic(line.rstrip("\n").split(" ")[1:], "add")
+            do_arithmetic(line.split(" ")[1:], "add")
         elif line.startswith("sub"):
-            do_arithmetic(line.rstrip("\n").split(" ")[1:], "sub")
+            do_arithmetic(line.split(" ")[1:], "sub")
         elif line.startswith("mul"):
-            do_arithmetic(line.rstrip("\n").split(" ")[1:], "mul")
+            do_arithmetic(line.split(" ")[1:], "mul")
         print_tables()
 
 if __name__ == "__main__":
