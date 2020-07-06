@@ -186,5 +186,8 @@ def main(args):
             return
         print_tables()
 
+    for line in out_RTL:
+        print(line)
+
 if __name__ == "__main__":
     main(sys.argv[1:])
