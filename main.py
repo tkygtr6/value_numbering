@@ -21,7 +21,7 @@ def search_var(var):
     global tables
     global max_qty
 
-    for col in tables:
+    for col in reversed(tables):
         if col["op"] == var:
             return col
 
@@ -37,7 +37,7 @@ def search_num(num):
     global tables
     global max_qty
 
-    for col in tables:
+    for col in reversed(tables):
         if col["op"] == "lit" and col["opd1"] == num:
             return col
 
@@ -61,7 +61,7 @@ def search_col(target_col, op):
     global tables
     global max_qty
 
-    for col in tables:
+    for col in reversed(tables):
         if col["op"] == target_col["op"] and \
                 col["opd1"] == target_col["opd1"] and \
                 col["opd2"] == target_col["opd2"]:
