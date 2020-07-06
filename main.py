@@ -10,57 +10,49 @@ tables = []
 max_qty = 0
 
 def init():
-    global tables
-    global max_qty
-
     tables = []
     max_qty = 0
 
-def search_var(var):
-    # 後ろからsearchするべき説
-    global tables
-    global max_qty
-
+def search_col_for_target_var(var):
     for col in reversed(tables):
         if col["op"] == var:
             return col
 
-    max_qty += 1
-    new_col = {}
-    new_col["Qty"] = max_qty
-    new_col["op"] = var
-    tables.append(new_col)
+    return None;
 
-    return new_col;
-
-def search_num(num):
-    global tables
-    global max_qty
-
+def search_col_for_target_num(num):
     for col in reversed(tables):
         if col["op"] == "lit" and col["opd1"] == num:
             return col
 
-    max_qty += 1
-    new_col = {}
-    new_col["Qty"] = max_qty
-    new_col["op"] = "lit"
-    new_col["opd1"] = num
-    tables.append(new_col)
+    return None;
 
-    return new_col;
+def search_or_newly_create_col(some_str):
+    global max_qty
 
-def search_str(some_str):
     if some_str.isdecimal():
-        col = search_num(some_str)
+        col = search_col_for_target_num(some_str)
+        if not col:
+            max_qty += 1
+            new_col = {}
+            new_col["Qty"] = max_qty
+            new_col["op"] = "lit"
+            new_col["opd1"] = some_str
+            tables.append(new_col)
+            col = new_col
     else:
-        col = search_var(some_str)
+        col = search_col_for_target_var(some_str)
+        if not col:
+            max_qty += 1
+            new_col = {}
+            new_col["Qty"] = max_qty
+            new_col["op"] = some_str
+            tables.append(new_col)
+            col = new_col
+
     return col
 
 def search_col(target_col, op):
-    global tables
-    global max_qty
-
     for col in reversed(tables):
         if col["op"] == target_col["op"] and \
                 col["opd1"] == target_col["opd1"] and \
@@ -72,6 +64,8 @@ def search_col(target_col, op):
                 col["opd1"] == target_col["opd2"] and \
                 col["opd2"] == target_col["opd1"]:
             return col
+    
+    return None
 
 def do_mov(args):
     global tables
@@ -79,7 +73,7 @@ def do_mov(args):
 
     print("mov", args[0], args[1])
 
-    col1 = search_str(args[0])
+    col1 = search_or_newly_create_col(args[0])
 
     new_col = {}
     new_col["Qty"] = col1["Qty"]
@@ -93,8 +87,8 @@ def do_arithmetic(args, op):
 
     print(op, args[0], args[1], args[2])
 
-    col1 = search_str(args[0])
-    col2 = search_str(args[1])
+    col1 = search_or_newly_create_col(args[0])
+    col2 = search_or_newly_create_col(args[1])
 
     col_for_calc = {}
     col_for_calc["op"] = op
