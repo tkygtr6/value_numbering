@@ -138,11 +138,11 @@ def main(args):
     for line in lines:
         if line.startswith("mov"):
             do_mov(line.rstrip("\n").split(" ")[1:])
-        if line.startswith("add"):
+        elif line.startswith("add"):
             do_arithmetic(line.rstrip("\n").split(" ")[1:], "add")
-        if line.startswith("sub"):
+        elif line.startswith("sub"):
             do_arithmetic(line.rstrip("\n").split(" ")[1:], "sub")
-        if line.startswith("mul"):
+        elif line.startswith("mul"):
             do_arithmetic(line.rstrip("\n").split(" ")[1:], "mul")
         print_tables()
         
