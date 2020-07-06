@@ -129,7 +129,7 @@ def main(args):
 
     init()
 
-    filename = os.path.join("inputs", args[0])
+    filename = args[0]
     with open(filename) as f:
         lines = f.readlines()
 
