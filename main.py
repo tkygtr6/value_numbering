@@ -50,27 +50,72 @@ def search_num(num):
 
     return new_col;
 
-def search_col(some_str):
+def search_str(some_str):
     if some_str.isdecimal():
         col = search_num(some_str)
     else:
         col = search_var(some_str)
     return col
 
+def search_col(target_col):
+    global tables
+    global max_qty
+
+    for col in tables:
+        if col["op"] == target_col["op"] and \
+                col["opd1"] == target_col["opd1"] and \
+                col["opd2"] == target_col["opd2"]:
+            return col
+
 
 def do_mov(args):
     global tables
     global max_qty
 
-    print(args[0], args[1])
+    print("mov", args[0], args[1])
 
-    col1 = search_col(args[0])
+    col1 = search_str(args[0])
 
     new_col = {}
     new_col["Qty"] = col1["Qty"]
     new_col["op"] = args[1]
     new_col["opd1"] = col1["Qty"]
     tables.append(new_col)
+
+def do_add(args):
+    global tables
+    global max_qty
+
+    print("add", args[0], args[1], args[2])
+
+    col1 = search_str(args[0])
+    col2 = search_str(args[1])
+
+    col_for_calc = {}
+    col_for_calc["op"] = "Add"
+    col_for_calc["opd1"] = col1["Qty"]
+    col_for_calc["opd2"] = col2["Qty"]
+
+    col_for_calc = search_col(col_for_calc)
+    if not col_for_calc:
+        max_qty += 1
+        col_for_calc = {}
+        col_for_calc["Qty"] = max_qty
+        col_for_calc["op"] = "Add"
+        col_for_calc["opd1"] = col1["Qty"]
+        col_for_calc["opd2"] = col2["Qty"]
+        tables.append(col_for_calc)
+    else:
+        print("Common subexpression elimination")
+        tables.append(col_for_calc)
+        pass
+
+    col_for_opd3 = {}
+    col_for_opd3["Qty"] = col_for_calc["Qty"]
+    col_for_opd3["op"] = args[2]
+    col_for_opd3["opd1"] = col_for_calc["Qty"]
+
+    tables.append(col_for_opd3)
 
 def print_tables():
     print("=" * 26 + " tables " + "=" * 26)
@@ -93,6 +138,8 @@ def main(args):
     for line in lines:
         if line.startswith("mov"):
             do_mov(line.rstrip("\n").split(" ")[1:])
+        if line.startswith("add"):
+            do_add(line.rstrip("\n").split(" ")[1:])
         print_tables()
         
 
