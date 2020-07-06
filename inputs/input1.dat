@@ -2,4 +2,4 @@ mov 3 r9
 add i0 r9 i1
 mov i0 i2
 mov 3 r11
-madd i2 r11 i3
+add i2 r11 i3
